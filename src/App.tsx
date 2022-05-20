@@ -6,6 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
+import { useState } from 'react';
 import {
   GridRowsProp,
   GridRowModesModel,
@@ -26,6 +27,8 @@ import {
   randomUpdatedDate,
   randomId,
 } from '@mui/x-data-grid-generator';
+import { WeatherForecastApi } from './api/typescript-fetch-client-generated';
+import { useEffect } from 'react';
 
 const initialRows: GridRowsProp = [
 ];
@@ -69,7 +72,29 @@ export default function FullFeaturedCrudGrid() {
     event.defaultMuiPrevented = true;
   };
 
+  useEffect(() => {
+    getData();
+  }, [])
 
+  //https://editor.swagger.io/
+  const getData = () => {
+    const client = new WeatherForecastApi({ basePath: "https://localhost:5001" });
+    client.weatherForecastGet().then((result) => setRows(result));
+
+
+  }
+  /* const[data,setData]=useState([]);
+   useEffect(()=>{
+     fetch('http://localhost:5001')
+     .then((res)=>res.json)
+     .then((res) =>setData(res));
+   },[]);
+   return <div>
+     <ul>
+       {data.map((ime)=><li key={ime}>{ime}</li>)}
+     </ul>
+   </div>
+  */
 
   const handleEditClick = (id: GridRowId) => () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
@@ -102,8 +127,9 @@ export default function FullFeaturedCrudGrid() {
   };
 
   const columns: GridColumns = [
-    { field: 'ime', headerName: 'Ime', width: 180, editable: true },
-    { field: 'prezime', headerName: 'Prezime', width:180, editable: true },
+    { field: 'id', headerName: 'ID', width: 180, editable: true},
+    { field: 'ime', headerName: 'Ime', width: 180, editable: true},
+    { field: 'prezime', headerName: 'Prezime', width: 180, editable: true },
     {
       field: 'posao',
       headerName: 'Posao',
